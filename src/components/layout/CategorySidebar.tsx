@@ -1,0 +1,92 @@
+import React from 'react';
+import { ChevronRight, X } from 'lucide-react';
+import { categories } from '../../data/categories';
+
+interface CategorySidebarProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSelectCategory?: (category: string) => void;
+}
+
+const CategorySidebar: React.FC<CategorySidebarProps> = ({ isOpen, onClose, onSelectCategory }) => {
+  const scrollToCatalog = () => {
+    const catalogElement = document.getElementById('product-catalog');
+    if (catalogElement) {
+      catalogElement.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleShowAll = () => {
+    if (onSelectCategory) {
+      onSelectCategory('');
+      onClose();
+      scrollToCatalog();
+    }
+  };
+
+  const handleCategoryClick = (slug: string) => {
+    if (onSelectCategory) {
+      onSelectCategory(slug);
+      onClose();
+      scrollToCatalog();
+    }
+  };
+
+  return (
+    <>
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"
+          onClick={onClose}
+        ></div>
+      )}
+      
+      <aside 
+        className={`
+          fixed md:sticky top-[80px] left-0 h-[calc(100vh-80px)] md:h-[calc(100vh-80px)] z-40 md:z-10
+          w-64 md:w-full bg-white shadow-lg md:shadow-none 
+          transition-all duration-300 ease-in-out transform
+          overflow-y-auto overscroll-contain
+          ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+        `}
+      >
+        <div className="sticky top-0 p-3 md:py-2 md:px-3 bg-gray-50/95 backdrop-blur-sm border-b border-gray-200 z-10">
+          <div className="flex justify-between items-center md:hidden">
+            <h2 className="font-semibold text-gray-800">Категории товаров</h2>
+            <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+              <X size={20} />
+            </button>
+          </div>
+          <h2 className="hidden md:block font-semibold text-gray-800">Категории</h2>
+        </div>
+
+        <nav className="p-1 pb-safe relative">
+          <ul>
+            <li>
+              <button
+                onClick={handleShowAll}
+                className="flex items-center justify-between py-2 px-3 rounded-lg text-white bg-black/90 hover:bg-gray-800 transition-colors text-sm font-medium w-full sticky top-[48px] z-10 shadow-md backdrop-blur-sm"
+              >
+                <span>Показать все</span>
+                <ChevronRight size={16} className="text-white" />
+              </button>
+            </li>
+            {categories.map((category) => (
+              <li key={category.id}>
+                <button 
+                  onClick={() => handleCategoryClick(category.slug)}
+                  className="flex items-center justify-between py-2 px-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors text-sm"
+                >
+                  <span>{category.name}</span>
+                  <ChevronRight size={16} className="text-gray-400" />
+                </button>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </aside>
+    </>
+  );
+};
+
+export default CategorySidebar;
