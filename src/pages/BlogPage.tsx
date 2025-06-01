@@ -115,16 +115,5 @@ const BlogPage: React.FC = () => {
     </div>
   );
 };
-                </div>
-              </motion.article>
-            ))}
-          </div>
-        </motion.div>
-      </main>
-
-      <Footer />
-    </div>
-  );
-};
 
 export default BlogPage;
