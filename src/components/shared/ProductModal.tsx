@@ -92,7 +92,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
       const { error } = await supabase
         .from('reviews')
         .update({ rating, comment })
-        .eq('id', parseInt(reviewId));
+        .eq('id', reviewId);
 
       if (error) throw error;
       await fetchReviews();
@@ -107,7 +107,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
       const { error } = await supabase
         .from('reviews')
         .delete()
-        .eq('id', parseInt(reviewId));
+        .eq('id', reviewId);
 
       if (error) throw error;
       await fetchReviews();
@@ -179,7 +179,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
             <div>
               <img
                 src={product.image_url || ''}
-                alt={product.name}
+                alt={`${product.name} - основное изображение`}
                 className="w-full rounded-lg object-cover aspect-square"
               />
             </div>
@@ -226,8 +226,8 @@ const ProductModal: React.FC<ProductModalProps> = ({
                 <button 
                   onClick={(e) => {
                     e.preventDefault();
-                    setActiveTab('reviews');
-                    navigate(`/product/${product.id}/reviews`);
+                    const reviewsSection = document.getElementById('reviews-section');
+                    reviewsSection?.scrollIntoView({ behavior: 'smooth' });
                   }}
                   className="text-gray-600 hover:text-blue-600 transition-colors text-sm"
                 >
@@ -237,8 +237,8 @@ const ProductModal: React.FC<ProductModalProps> = ({
                 <button 
                   onClick={(e) => {
                     e.preventDefault();
-                    setActiveTab('questions');
-                    navigate(`/product/${product.id}/questions`);
+                    const questionsSection = document.getElementById('questions-section');
+                    questionsSection?.scrollIntoView({ behavior: 'smooth' });
                   }}
                   className="text-gray-600 hover:text-blue-600 transition-colors text-sm"
                 >
