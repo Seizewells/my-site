@@ -13,8 +13,6 @@ import { Menu, ShoppingCart, Heart, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import AdminBar from '../components/admin/AdminBar';
-import { checkAdminStatus } from '../lib/supabase';
 
 const containerVariants = {
   hidden: { opacity: 0 },

@@ -53,7 +53,7 @@ const ProductList: React.FC = () => {
     setShowForm(true);
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: number) => {
     if (!window.confirm('Вы уверены, что хотите удалить этот товар?')) return;
 
     try {

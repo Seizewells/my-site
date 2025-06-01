@@ -14,16 +14,6 @@ interface ProductModalProps {
   onClose: () => void;
   onAddToCart: (product: Product) => void;
   onAddToFavorites: (product: Product) => void;
-  reviews?: Review[];
-  isAuthenticated?: boolean;
-  currentUserId?: string;
-  onAddReview?: (productId: string, rating: number, text: string) => Promise<void>;
-  onEditReview?: (review: Review) => void;
-  onDeleteReview?: (reviewId: string) => void;
-  currentUserId?: string;
-  onAddReview?: (productId: string, rating: number, text: string) => Promise<void>;
-  onEditReview?: (review: Review) => void;
-  onDeleteReview?: (reviewId: string) => void;
 }
 
 const ProductModal: React.FC<ProductModalProps> = ({
