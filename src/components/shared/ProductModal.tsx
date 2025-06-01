@@ -278,7 +278,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
                       <div className="mb-6 space-y-4">
                         <div className="bg-white p-4 rounded-lg shadow-sm">
                           <div className="flex items-center mb-2">
-                            <img src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg\" alt="Иван\" className="w-10 h-10 rounded-full object-cover" />
+                            <img src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg\" alt=\"Иван\" className=\"w-10 h-10 rounded-full object-cover" />
                             <div className="ml-3">
                               <div className="font-medium">Иван Петров</div>
                               <div className="text-sm text-gray-500">2 дня назад</div>
