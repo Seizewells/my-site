@@ -16,8 +16,9 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onSubmit, onCancel }
   const [description, setDescription] = useState(product?.description || '');
   const [categoryId, setCategoryId] = useState(product?.category_id?.toString() || '');
   const [image, setImage] = useState(product?.image_url || '');
-  const [isNew, setIsNew] = useState(product?.is_new || false);
-  const [isBestseller, setIsBestseller] = useState(product?.is_bestseller || false);
+  const [categoryId, setCategoryId] = useState(product?.category_id?.toString() || '');
+  const [image, setImage] = useState(product?.image_url || '');
+  const [inventory, setInventory] = useState(product?.inventory?.toString() || '100');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -54,8 +55,9 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onSubmit, onCancel }
         category_id: parseInt(categoryId),
         image_url: image,
         is_new: isNew,
-        is_bestseller: isBestseller,
-        inventory: 100, // Добавьте поле для управления инвентарем
+        category_id: parseInt(categoryId),
+        image_url: image,
+        inventory: parseInt(inventory),
         updated_at: new Date()
       };
 
@@ -136,6 +138,20 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onSubmit, onCancel }
             step="0.01"
           />
         </div>
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Количество на складе
+        </label>
+        <input
+          type="number"
+          value={inventory}
+          onChange={(e) => setInventory(e.target.value)}
+          className="w-full px-3 py-2 border border-gray-300 rounded-md"
+          required
+          min="0"
+        />
       </div>
 
       <div>

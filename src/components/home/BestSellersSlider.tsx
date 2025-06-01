@@ -2,9 +2,9 @@ import React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Product } from '../../types';
-import { getBestSellers } from '../../data/products';
 import ProductModal from '../shared/ProductModal';
 import { ShoppingCart, Heart, Star } from 'lucide-react';
+import { supabase } from '../../lib/supabase';
 
 interface BestSellersSliderProps {
   onAddToCart: (product: Product) => void;
@@ -15,10 +15,34 @@ const BestSellersSlider: React.FC<BestSellersSliderProps> = ({ onAddToCart, onAd
   const [currentSlide, setCurrentSlide] = React.useState(0);
   const [selectedProduct, setSelectedProduct] = React.useState<Product | null>(null);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const bestSellers = getBestSellers().slice(0, 4);
+  const [bestSellers, setBestSellers] = React.useState<Product[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
   const slidesToShow = 3;
   const maxSlides = Math.ceil(bestSellers.length / slidesToShow) - 1;
 
+  React.useEffect(() => {
+    const fetchBestSellers = async () => {
+      try {
+        setLoading(true);
+        const { data, error } = await supabase
+          .from('products')
+          .select('*')
+          .eq('is_bestseller', true)
+          .limit(4);
+
+        if (error) throw error;
+        setBestSellers(data || []);
+      } catch (err) {
+        console.error('Ошибка при загрузке хитов продаж:', err);
+        setError(err instanceof Error ? err.message : 'Ошибка при загрузке хитов продаж');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBestSellers();
+  }, []);
   const nextSlide = () => {
     setCurrentSlide(current => current === maxSlides ? 0 : current + 1);
   };

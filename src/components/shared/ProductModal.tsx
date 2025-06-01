@@ -102,15 +102,15 @@ const ProductModal: React.FC<ProductModalProps> = ({
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-4 md:p-6">
             <div>
               <img
-                src={product.image}
+                src={product.image_url || ''}
                 alt={product.name}
                 className="w-full rounded-lg object-cover aspect-square mb-4"
               />
               <div className="grid grid-cols-4 gap-2">
-                <img src={product.image} alt="" className="w-full aspect-square object-cover rounded cursor-pointer hover:opacity-80" />
-                <img src={product.image} alt="" className="w-full aspect-square object-cover rounded cursor-pointer hover:opacity-80" />
-                <img src={product.image} alt="" className="w-full aspect-square object-cover rounded cursor-pointer hover:opacity-80" />
-                <img src={product.image} alt="" className="w-full aspect-square object-cover rounded cursor-pointer hover:opacity-80" />
+                <img src={product.image_url || ''} alt="" className="w-full aspect-square object-cover rounded cursor-pointer hover:opacity-80" />
+                <img src={product.image_url || ''} alt="" className="w-full aspect-square object-cover rounded cursor-pointer hover:opacity-80" />
+                <img src={product.image_url || ''} alt="" className="w-full aspect-square object-cover rounded cursor-pointer hover:opacity-80" />
+                <img src={product.image_url || ''} alt="" className="w-full aspect-square object-cover rounded cursor-pointer hover:opacity-80" />
               </div>
             </div>
 
@@ -185,9 +185,9 @@ const ProductModal: React.FC<ProductModalProps> = ({
                 <div className="text-3xl font-bold text-gray-900 mb-2">
                   {product.price.toLocaleString()} ₽
                 </div>
-                {product.oldPrice && (
+                {product.old_price && (
                   <div className="text-sm text-gray-400 line-through">
-                    {product.oldPrice.toLocaleString()} ₽
+                    {product.old_price.toLocaleString()} ₽
                   </div>
                 )}
               </div>
@@ -242,7 +242,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
                 Купить сейчас
               </button>
 
-              {product.isNew && (
+              {product.is_new && (
                 <div className="mt-3 inline-block bg-green-500 text-white text-xs font-bold px-2 py-1 rounded">
                   Новинка
                 </div>
