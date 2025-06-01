@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import ProductCard from '../shared/ProductCard';
-import { getBestSellers } from '../../data/products';
 import { Product } from '../../types';
+import { supabase } from '../../lib/supabase';
+import { AlertCircle } from 'lucide-react';
 
 interface BestSellersProps {
   onAddToCart: (product: Product) => void;
@@ -9,7 +10,58 @@ interface BestSellersProps {
 }
 
 const BestSellers: React.FC<BestSellersProps> = ({ onAddToCart, onAddToFavorites }) => {
-  const bestSellers = getBestSellers();
+  const [bestSellers, setBestSellers] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchBestSellers = async () => {
+      try {
+        setLoading(true);
+        const { data, error } = await supabase
+          .from('products')
+          .select('*')
+          .eq('is_bestseller', true)
+          .order('rating', { ascending: false })
+          .limit(8);
+
+        if (error) throw error;
+        setBestSellers(data || []);
+      } catch (err) {
+        console.error('Ошибка при загрузке хитов продаж:', err);
+        setError(err instanceof Error ? err.message : 'Ошибка при загрузке хитов продаж');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBestSellers();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="py-8">
+        <div className="text-center">Загрузка хитов продаж...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="py-8">
+        <div className="bg-red-50 text-red-500 p-3 rounded-md">
+          <div className="flex items-center gap-2">
+            <AlertCircle size={20} />
+            {error}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (bestSellers.length === 0) {
+    return null;
+  }
 
   return (
     <div className="py-8">

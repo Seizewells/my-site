@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Product } from '../../types';
 import { supabase } from '../../lib/supabase';
-import { Edit2, Trash2, Plus } from 'lucide-react';
+import { Edit2, Trash2, Plus, AlertCircle } from 'lucide-react';
 import ProductForm from './ProductForm';
 
 const ProductList: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Record<number, string>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showForm, setShowForm] = useState(false);
@@ -15,11 +16,26 @@ const ProductList: React.FC = () => {
     try {
       const { data, error } = await supabase
         .from('products')
-        .select('*')
+        .select(`
+          *,
+          categories (
+            id,
+            name
+          )
+        `)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
       setProducts(data || []);
+      
+      // Создаем мапу категорий для быстрого доступа
+      const categoriesMap: Record<number, string> = {};
+      data?.forEach(product => {
+        if (product.categories) {
+          categoriesMap[product.categories.id] = product.categories.name;
+        }
+      });
+      setCategories(categoriesMap);
     } catch (err) {
       console.error('Ошибка при загрузке товаров:', err);
       setError(err instanceof Error ? err.message : 'Ошибка при загрузке товаров');
@@ -61,7 +77,14 @@ const ProductList: React.FC = () => {
   };
 
   if (loading) return <div>Загрузка...</div>;
-  if (error) return <div className="text-red-500">{error}</div>;
+  if (error) return (
+    <div className="bg-red-50 text-red-500 p-3 rounded-md">
+      <div className="flex items-center gap-2">
+        <AlertCircle size={20} />
+        {error}
+      </div>
+    </div>
+  );
 
   if (showForm) {
     return (
@@ -118,7 +141,7 @@ const ProductList: React.FC = () => {
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
                     <img
-                      src={product.image}
+                      src={product.image_url || ''}
                       alt={product.name}
                       className="h-10 w-10 rounded-full object-cover"
                     />
@@ -131,17 +154,17 @@ const ProductList: React.FC = () => {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm text-gray-900">
-                    {product.price.toLocaleString()} ₽
+                    {product.price?.toLocaleString()} ₽
                   </div>
-                  {product.oldPrice && (
+                  {product.old_price && (
                     <div className="text-sm text-gray-500 line-through">
-                      {product.oldPrice.toLocaleString()} ₽
+                      {product.old_price.toLocaleString()} ₽
                     </div>
                   )}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                    {product.category}
+                    {categories[product.category_id] || 'Без категории'}
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
