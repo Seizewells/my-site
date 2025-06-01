@@ -180,14 +180,8 @@ const ProductModal: React.FC<ProductModalProps> = ({
               <img
                 src={product.image_url || ''}
                 alt={product.name}
-                className="w-full rounded-lg object-cover aspect-square mb-4"
+                className="w-full rounded-lg object-cover aspect-square"
               />
-              <div className="grid grid-cols-4 gap-2">
-                <img src={product.image_url || ''} alt="" className="w-full aspect-square object-cover rounded cursor-pointer hover:opacity-80" />
-                <img src={product.image_url || ''} alt="" className="w-full aspect-square object-cover rounded cursor-pointer hover:opacity-80" />
-                <img src={product.image_url || ''} alt="" className="w-full aspect-square object-cover rounded cursor-pointer hover:opacity-80" />
-                <img src={product.image_url || ''} alt="" className="w-full aspect-square object-cover rounded cursor-pointer hover:opacity-80" />
-              </div>
             </div>
 
             <div>
