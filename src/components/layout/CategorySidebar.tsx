@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChevronRight, X, AlertCircle } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { Category } from '../../types';
