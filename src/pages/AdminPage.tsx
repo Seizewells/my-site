@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Package, Users, ShoppingBag, Settings, LogOut, FileText } from 'lucide-react';
+import { Package, Users, ShoppingBag, Settings, LogOut, FileText, BookOpen } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import ProductList from '../components/admin/ProductList';
 import UserList from '../components/admin/UserList';
 import OrderList from '../components/admin/OrderList';
+import ArticleList from '../components/admin/ArticleList';
 
 const AdminPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState('products');
@@ -70,6 +71,8 @@ const AdminPage: React.FC = () => {
               >
                 <FileText size={20} className="mr-3" />
                 Статьи
+                <BookOpen size={20} className="mr-3" />
+                Articles
               </button>
               <button
                 onClick={() => setActiveTab('orders')}
@@ -117,6 +120,9 @@ const AdminPage: React.FC = () => {
             >
               {activeTab === 'products' && (
                 <ProductList />
+              )}
+              {activeTab === 'articles' && (
+                <ArticleList />
               )}
               {activeTab === 'orders' && (
                 <OrderList />
