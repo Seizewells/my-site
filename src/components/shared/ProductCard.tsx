@@ -5,11 +5,19 @@ import ProductModal from './ProductModal';
 
 interface ProductCardProps {
   product: Product;
+  isAuthenticated?: boolean;
+  currentUserId?: string;
   onAddToCart: (product: Product) => void;
   onAddToFavorites: (product: Product) => void;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, onAddToFavorites }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ 
+  product, 
+  isAuthenticated,
+  currentUserId,
+  onAddToCart, 
+  onAddToFavorites 
+}) => {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
 
   return (
@@ -94,6 +102,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, onAddTo
         product={product}
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+        isAuthenticated={isAuthenticated}
+        currentUserId={currentUserId}
         onAddToCart={onAddToCart}
         onAddToFavorites={onAddToFavorites}
       />

@@ -9,9 +9,16 @@ import { supabase } from '../../lib/supabase';
 interface BestSellersSliderProps {
   onAddToCart: (product: Product) => void;
   onAddToFavorites: (product: Product) => void;
+  isAuthenticated?: boolean;
+  currentUserId?: string;
 }
 
-const BestSellersSlider: React.FC<BestSellersSliderProps> = ({ onAddToCart, onAddToFavorites }) => {
+const BestSellersSlider: React.FC<BestSellersSliderProps> = ({ 
+  onAddToCart, 
+  onAddToFavorites,
+  isAuthenticated,
+  currentUserId
+}) => {
   const [currentSlide, setCurrentSlide] = React.useState(0);
   const [selectedProduct, setSelectedProduct] = React.useState<Product | null>(null);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
@@ -137,6 +144,8 @@ const BestSellersSlider: React.FC<BestSellersSliderProps> = ({ onAddToCart, onAd
           product={selectedProduct}
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
+          isAuthenticated={isAuthenticated}
+          currentUserId={currentUserId}
           onAddToCart={onAddToCart}
           onAddToFavorites={onAddToFavorites}
         />
