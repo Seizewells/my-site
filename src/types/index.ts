@@ -14,6 +14,11 @@ export interface Product {
   specifications: Record<string, any>;
   created_at: string;
   updated_at: string;
+  categories?: {
+    id: number;
+    name: string;
+    slug: string;
+  };
 }
 
 export interface Category {
@@ -30,13 +35,16 @@ export interface CartItem extends Product {
 }
 
 export interface Review {
-  id: string;
-  productId: string;
-  userId: string;
-  userName: string;
+  id: number;
+  product_id: number;
+  user_id: string;
+  comment: string;
   rating: number;
-  text: string;
-  createdAt: string;
+  created_at: string;
+  profiles?: {
+    username: string | null;
+    avatar_url: string | null;
+  };
 }
 
 export interface User {
