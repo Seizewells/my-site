@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Product } from '../../types';
+import { Product, Category } from '../../types';
 import { supabase } from '../../lib/supabase';
 import { AlertCircle } from 'lucide-react';
 
@@ -12,12 +12,33 @@ interface ProductFormProps {
 const ProductForm: React.FC<ProductFormProps> = ({ product, onSubmit, onCancel }) => {
   const [name, setName] = useState(product?.name || '');
   const [price, setPrice] = useState(product?.price.toString() || '');
-  const [oldPrice, setOldPrice] = useState(product?.oldPrice?.toString() || '');
+  const [oldPrice, setOldPrice] = useState(product?.old_price?.toString() || '');
   const [description, setDescription] = useState(product?.description || '');
-  const [category, setCategory] = useState(product?.category || '');
-  const [image, setImage] = useState(product?.image || '');
+  const [categoryId, setCategoryId] = useState(product?.category_id?.toString() || '');
+  const [image, setImage] = useState(product?.image_url || '');
+  const [isNew, setIsNew] = useState(product?.is_new || false);
+  const [isBestseller, setIsBestseller] = useState(product?.is_bestseller || false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  useEffect(() => {
+    const loadCategories = async () => {
+      const { data, error } = await supabase
+        .from('categories')
+        .select('*')
+        .order('name');
+      
+      if (error) {
+        console.error('Ошибка загрузки категорий:', error);
+        return;
+      }
+      
+      setCategories(data || []);
+    };
+    
+    loadCategories();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,10 +49,13 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onSubmit, onCancel }
       const productData = {
         name,
         price: parseFloat(price),
-        old_price: oldPrice ? parseFloat(oldPrice) : null,
+        old_price: oldPrice ? parseFloat(oldPrice) : undefined,
         description,
-        category,
-        image,
+        category_id: parseInt(categoryId),
+        image_url: image,
+        is_new: isNew,
+        is_bestseller: isBestseller,
+        inventory: 100, // Добавьте поле для управления инвентарем
         updated_at: new Date()
       };
 
@@ -118,18 +142,18 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onSubmit, onCancel }
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Категория
         </label>
-        <select
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
+        <select 
+          value={categoryId}
+          onChange={(e) => setCategoryId(e.target.value)}
           className="w-full px-3 py-2 border border-gray-300 rounded-md"
           required
         >
           <option value="">Выберите категорию</option>
-          <option value="santekhnika">Сантехника</option>
-          <option value="vanny">Ванны</option>
-          <option value="dushevye-kabiny">Душевые кабины</option>
-          <option value="smesiteli">Смесители</option>
-          <option value="rakoviny">Раковины</option>
+          {categories.map((category) => (
+            <option key={category.id} value={category.id}>
+              {category.name}
+            </option>
+          ))}
         </select>
       </div>
 
@@ -157,6 +181,27 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onSubmit, onCancel }
           rows={4}
           required
         />
+      </div>
+
+      <div className="flex space-x-4 mb-4">
+        <label className="flex items-center">
+          <input
+            type="checkbox"
+            checked={isNew}
+            onChange={(e) => setIsNew(e.target.checked)}
+            className="mr-2"
+          />
+          <span className="text-sm text-gray-700">Новинка</span>
+        </label>
+        <label className="flex items-center">
+          <input
+            type="checkbox"
+            checked={isBestseller}
+            onChange={(e) => setIsBestseller(e.target.checked)}
+            className="mr-2"
+          />
+          <span className="text-sm text-gray-700">Хит продаж</span>
+        </label>
       </div>
 
       <div className="flex justify-end space-x-2">
