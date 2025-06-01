@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronRight, X } from 'lucide-react';
+import { ChevronRight, X, AlertCircle } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { Category } from '../../types';
 
@@ -15,6 +15,32 @@ const CategorySidebar: React.FC<CategorySidebarProps> = ({ isOpen, onClose, onSe
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        setLoading(true);
+        const { data, error } = await supabase
+          .from('categories')
+          .select('*')
+          .order('name');
+
+        if (error) throw error;
+        setCategories(data || []);
+      } catch (err) {
+        console.error('Ошибка при загрузке категорий:', err);
+        setError(err instanceof Error ? err.message : 'Ошибка при загрузке категорий');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  const [categories, setCategories] = React.useState<Category[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
     const fetchCategories = async () => {
       try {
         setLoading(true);
@@ -86,8 +112,18 @@ const CategorySidebar: React.FC<CategorySidebarProps> = ({ isOpen, onClose, onSe
           </div>
           <h2 className="hidden md:block font-semibold text-gray-800">Категории</h2>
         </div>
-
+        
         <nav className="p-1 pb-safe relative">
+          {loading ? (
+            <div className="p-3 text-center text-gray-500">Загрузка категорий...</div>
+          ) : error ? (
+            <div className="p-3 bg-red-50 text-red-500 rounded-md">
+              <div className="flex items-center gap-2">
+                <AlertCircle size={20} />
+                {error}
+              </div>
+            </div>
+          ) : (
           <ul>
             <li>
               <button
@@ -98,18 +134,24 @@ const CategorySidebar: React.FC<CategorySidebarProps> = ({ isOpen, onClose, onSe
                 <ChevronRight size={16} className="text-white" />
               </button>
             </li>
-            {categories.map((category) => (
+            {categories.length > 0 ? categories.map((category) => (
               <li key={category.id}>
                 <button 
                   onClick={() => handleCategoryClick(category.slug)}
                   className="flex items-center justify-between py-2 px-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors text-sm"
                 >
                   <span>{category.name}</span>
+                  <span>{category.name} ({category.id})</span>
                   <ChevronRight size={16} className="text-gray-400" />
                 </button>
               </li>
-            ))}
+            )) : (
+              <li className="p-3 text-center text-gray-500">
+                Нет доступных категорий
+              </li>
+            )}
           </ul>
+          )}
         </nav>
       </aside>
     </>
