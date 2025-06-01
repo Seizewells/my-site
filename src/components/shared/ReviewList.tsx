@@ -1,12 +1,14 @@
 import React from 'react';
 import { Star, Edit2, Trash2 } from 'lucide-react';
 import { Review } from '../../types';
+import { formatDistanceToNow } from 'date-fns';
+import { ru } from 'date-fns/locale';
 
 interface ReviewListProps {
   reviews: Review[];
   currentUserId?: string;
-  onEdit?: (review: Review) => void;
-  onDelete?: (reviewId: string) => void;
+  onEdit: (reviewId: number, rating: number, comment: string) => Promise<void>;
+  onDelete: (reviewId: number) => Promise<void>;
 }
 
 const ReviewList: React.FC<ReviewListProps> = ({
@@ -22,7 +24,9 @@ const ReviewList: React.FC<ReviewListProps> = ({
           <div className="flex justify-between items-start">
             <div>
               <div className="flex items-center">
-                <span className="font-medium text-gray-900">{review.userName}</span>
+                <span className="font-medium text-gray-900">
+                  {review.profiles?.username || 'Пользователь'}
+                </span>
                 <span className="mx-2 text-gray-300">•</span>
                 <div className="flex">
                   {[...Array(5)].map((_, i) => (
@@ -39,11 +43,14 @@ const ReviewList: React.FC<ReviewListProps> = ({
                 </div>
               </div>
               <div className="text-sm text-gray-500 mt-1">
-                {new Date(review.createdAt).toLocaleDateString()}
+                {formatDistanceToNow(new Date(review.created_at), {
+                  addSuffix: true,
+                  locale: ru
+                })}
               </div>
             </div>
             
-            {currentUserId === review.userId && (
+            {currentUserId === review.user_id && (
               <div className="flex space-x-2">
                 <button
                   onClick={() => onEdit?.(review)}
@@ -61,7 +68,7 @@ const ReviewList: React.FC<ReviewListProps> = ({
             )}
           </div>
           
-          <p className="mt-2 text-gray-600">{review.text}</p>
+          <p className="mt-2 text-gray-600">{review.comment}</p>
         </div>
       ))}
     </div>

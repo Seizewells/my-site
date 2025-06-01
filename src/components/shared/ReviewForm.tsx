@@ -2,14 +2,13 @@ import React, { useState } from 'react';
 import { Star } from 'lucide-react';
 
 interface ReviewFormProps {
-  productId: string;
-  onSubmit: (rating: number, text: string) => Promise<void>;
+  onSubmit: (rating: number, comment: string) => Promise<void>;
 }
 
-const ReviewForm: React.FC<ReviewFormProps> = ({ productId, onSubmit }) => {
+const ReviewForm: React.FC<ReviewFormProps> = ({ onSubmit }) => {
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
-  const [text, setText] = useState('');
+  const [comment, setComment] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -18,9 +17,9 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ productId, onSubmit }) => {
     
     setIsSubmitting(true);
     try {
-      await onSubmit(rating, text);
+      await onSubmit(rating, comment);
       setRating(0);
-      setText('');
+      setComment('');
     } catch (error) {
       console.error('Error submitting review:', error);
     } finally {
@@ -59,11 +58,11 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ productId, onSubmit }) => {
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Отзыв
+          Комментарий
         </label>
         <textarea
-          value={text}
-          onChange={(e) => setText(e.target.value)}
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
           rows={4}
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="Поделитесь своими впечатлениями о товаре..."
