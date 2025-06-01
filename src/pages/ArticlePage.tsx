@@ -6,6 +6,7 @@ import { Article } from '../types';
 import { AlertCircle } from 'lucide-react';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
+import ReactMarkdown from 'react-markdown';
 
 const ArticlePage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -127,11 +128,7 @@ const ArticlePage: React.FC = () => {
             </div>
 
             <div className="prose prose-lg max-w-none">
-              {article.content.split('\n').map((paragraph, index) => (
-                <p key={index} className="mb-4">
-                  {paragraph}
-                </p>
-              ))}
+              <ReactMarkdown>{article.content}</ReactMarkdown>
             </div>
 
             <div className="mt-8 pt-8 border-t">

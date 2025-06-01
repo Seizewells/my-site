@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { supabase } from '../lib/supabase';
 import { Article } from '../types';
 import { AlertCircle } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
 
 const BlogPage: React.FC = () => {
   const [articles, setArticles] = useState<Article[]>([]);
@@ -91,7 +92,7 @@ const BlogPage: React.FC = () => {
                       {article.title}
                     </h2>
                     <p className="text-gray-600 mb-4 line-clamp-3">
-                      {article.content}
+                      <ReactMarkdown>{article.content}</ReactMarkdown>
                     </p>
                     <a
                       href={`/blog/${article.slug}`}
