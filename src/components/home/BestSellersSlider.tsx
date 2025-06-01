@@ -69,7 +69,7 @@ const BestSellersSlider: React.FC<BestSellersSliderProps> = ({ onAddToCart, onAd
               >
                 <div className="relative">
                   <img 
-                    src={product.image} 
+                    src={product.image_url || ''} 
                     alt={product.name} 
                     className="w-full aspect-square object-cover"
                   />
@@ -84,7 +84,7 @@ const BestSellersSlider: React.FC<BestSellersSliderProps> = ({ onAddToCart, onAd
                     <div>
                       <div className="font-bold text-base text-gray-900">{product.price.toLocaleString()} ₽</div>
                       <div className="text-xs text-gray-500 line-through">
-                        {product.oldPrice ? `${product.oldPrice.toLocaleString()} ₽` : ''}
+                        {product.old_price ? `${product.old_price.toLocaleString()} ₽` : ''}
                       </div>
                     </div>
                     <button 
@@ -98,9 +98,9 @@ const BestSellersSlider: React.FC<BestSellersSliderProps> = ({ onAddToCart, onAd
                     </button>
                   </div>
                 </div>
-                {product.oldPrice && (
+                {product.old_price && (
                   <div className="absolute top-2 left-2 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
-                    -{Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)}%
+                    -{Math.round(((product.old_price - product.price) / product.old_price) * 100)}%
                   </div>
                 )}
               </div>
