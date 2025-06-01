@@ -14,6 +14,7 @@ import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Product, CartItem } from './types';
 import { checkAdminStatus, supabase, isAuthenticated } from './lib/supabase';
+import { AlertCircle } from 'lucide-react';
 
 const contentVariants: Variants = {
   hidden: { opacity: 0, y: 20 },
@@ -35,6 +36,9 @@ function App() {
   const [userEmail, setUserEmail] = React.useState<string | undefined>();
   const [cartItems, setCartItems] = React.useState<CartItem[]>([]);
   const [favorites, setFavorites] = React.useState<Product[]>([]);
+  const [cartLoading, setCartLoading] = React.useState(false);
+  const [favoritesLoading, setFavoritesLoading] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     const timer = setTimeout(() => {
@@ -79,47 +83,214 @@ function App() {
     };
   }, []);
 
+  // Загрузка корзины и избранного при авторизации
+  React.useEffect(() => {
+    const loadUserData = async () => {
+      if (!currentUserId) {
+        setCartItems([]);
+        setFavorites([]);
+        return;
+      }
+
+      try {
+        setCartLoading(true);
+        setFavoritesLoading(true);
+
+        // Загрузка корзины
+        const { data: cartData, error: cartError } = await supabase
+          .from('cart_items')
+          .select(`
+            quantity,
+            products (*)
+          `)
+          .eq('user_id', currentUserId);
+
+        if (cartError) throw cartError;
+
+        const formattedCartItems = cartData
+          .filter(item => item.products)
+          .map(item => ({
+            ...item.products,
+            quantity: item.quantity
+          }));
+
+        setCartItems(formattedCartItems);
+
+        // Загрузка избранного
+        const { data: favoritesData, error: favoritesError } = await supabase
+          .from('favorites')
+          .select('products (*)')
+          .eq('user_id', currentUserId);
+
+        if (favoritesError) throw favoritesError;
+
+        const formattedFavorites = favoritesData
+          .filter(item => item.products)
+          .map(item => item.products);
+
+        setFavorites(formattedFavorites);
+      } catch (err) {
+        console.error('Ошибка загрузки данных пользователя:', err);
+        setError(err instanceof Error ? err.message : 'Ошибка загрузки данных пользователя');
+      } finally {
+        setCartLoading(false);
+        setFavoritesLoading(false);
+      }
+    };
+
+    loadUserData();
+  }, [currentUserId]);
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     setIsAdmin(false);
     setUserEmail(undefined);
+    setCartItems([]);
+    setFavorites([]);
   };
 
-  const handleAddToCart = (product: Product) => {
-    setCartItems(prevItems => {
-      const existingItem = prevItems.find(item => item.id === product.id);
+  const handleAddToCart = async (product: Product) => {
+    if (!currentUserId) {
+      setError('Необходимо войти в аккаунт');
+      return;
+    }
+
+    try {
+      const existingItem = cartItems.find(item => item.id === product.id);
+      const newQuantity = existingItem ? existingItem.quantity + 1 : 1;
+
       if (existingItem) {
-        return prevItems.map(item =>
-          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+        const { error } = await supabase
+          .from('cart_items')
+          .update({ quantity: newQuantity })
+          .eq('user_id', currentUserId)
+          .eq('product_id', product.id);
+
+        if (error) throw error;
+      } else {
+        const { error } = await supabase
+          .from('cart_items')
+          .insert({
+            user_id: currentUserId,
+            product_id: product.id,
+            quantity: 1
+          });
+
+        if (error) throw error;
+      }
+
+      setCartItems(prevItems => {
+        const existingItem = prevItems.find(item => item.id === product.id);
+        if (existingItem) {
+          return prevItems.map(item =>
+            item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+          );
+        }
+        return [...prevItems, { ...product, quantity: 1 }];
+      });
+    } catch (err) {
+      console.error('Ошибка при добавлении в корзину:', err);
+      setError(err instanceof Error ? err.message : 'Ошибка при добавлении в корзину');
+    }
+  };
+
+  const handleUpdateCartQuantity = async (productId: number, quantity: number) => {
+    if (!currentUserId) {
+      setError('Необходимо войти в аккаунт');
+      return;
+    }
+
+    try {
+      if (quantity === 0) {
+        const { error } = await supabase
+          .from('cart_items')
+          .delete()
+          .eq('user_id', currentUserId)
+          .eq('product_id', productId);
+
+        if (error) throw error;
+
+        setCartItems(prevItems => prevItems.filter(item => item.id !== productId));
+      } else {
+        const { error } = await supabase
+          .from('cart_items')
+          .update({ quantity })
+          .eq('user_id', currentUserId)
+          .eq('product_id', productId);
+
+        if (error) throw error;
+
+        setCartItems(prevItems =>
+          prevItems.map(item =>
+            item.id === productId ? { ...item, quantity } : item
+          )
         );
       }
-      return [...prevItems, { ...product, quantity: 1 }];
-    });
+    } catch (err) {
+      console.error('Ошибка при обновлении количества:', err);
+      setError(err instanceof Error ? err.message : 'Ошибка при обновлении количества');
+    }
   };
 
-  const handleUpdateCartQuantity = (productId: string, quantity: number) => {
-    setCartItems(prevItems => {
-      if (quantity === 0) {
-        return prevItems.filter(item => item.id !== productId);
-      }
-      return prevItems.map(item =>
-        item.id === productId ? { ...item, quantity } : item
-      );
-    });
+  const handleRemoveFromCart = async (productId: number) => {
+    if (!currentUserId) {
+      setError('Необходимо войти в аккаунт');
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('cart_items')
+        .delete()
+        .eq('user_id', currentUserId)
+        .eq('product_id', productId);
+
+      if (error) throw error;
+
+      setCartItems(prevItems => prevItems.filter(item => item.id !== productId));
+    } catch (err) {
+      console.error('Ошибка при удалении из корзины:', err);
+      setError(err instanceof Error ? err.message : 'Ошибка при удалении из корзины');
+    }
   };
 
-  const handleRemoveFromCart = (productId: string) => {
-    setCartItems(prevItems => prevItems.filter(item => item.id !== productId));
-  };
+  const handleToggleFavorite = async (product: Product) => {
+    if (!currentUserId) {
+      setError('Необходимо войти в аккаунт');
+      return;
+    }
 
-  const handleToggleFavorite = (product: Product) => {
-    setFavorites(prevFavorites => {
-      const isAlreadyFavorite = prevFavorites.some(item => item.id === product.id);
+    try {
+      const isAlreadyFavorite = favorites.some(item => item.id === product.id);
+
       if (isAlreadyFavorite) {
-        return prevFavorites.filter(item => item.id !== product.id);
+        const { error } = await supabase
+          .from('favorites')
+          .delete()
+          .eq('user_id', currentUserId)
+          .eq('product_id', product.id);
+
+        if (error) throw error;
+
+        setFavorites(prevFavorites => 
+          prevFavorites.filter(item => item.id !== product.id)
+        );
+      } else {
+        const { error } = await supabase
+          .from('favorites')
+          .insert({
+            user_id: currentUserId,
+            product_id: product.id
+          });
+
+        if (error) throw error;
+
+        setFavorites(prevFavorites => [...prevFavorites, product]);
       }
-      return [...prevFavorites, product];
-    });
+    } catch (err) {
+      console.error('Ошибка при обновлении избранного:', err);
+      setError(err instanceof Error ? err.message : 'Ошибка при обновлении избранного');
+    }
   };
 
   return (
@@ -145,11 +316,22 @@ function App() {
               animate="visible"
               className="w-full"
             >
+              {error && (
+                <div className="fixed top-4 right-4 z-50 bg-red-50 text-red-500 p-3 rounded-md shadow-lg">
+                  <div className="flex items-center gap-2">
+                    <AlertCircle size={20} />
+                    {error}
+                  </div>
+                </div>
+              )}
+
               <Routes>
                 <Route path="/" element={
                   <HomePage 
                     cartItems={cartItems}
                     favorites={favorites}
+                    isAuthenticated={isUserAuthenticated}
+                    currentUserId={currentUserId}
                     onAddToCart={handleAddToCart}
                     onToggleFavorite={handleToggleFavorite}
                     isAuthenticated={isUserAuthenticated}
