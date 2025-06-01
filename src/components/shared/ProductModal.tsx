@@ -107,10 +107,10 @@ const ProductModal: React.FC<ProductModalProps> = ({
                 className="w-full rounded-lg object-cover aspect-square mb-4"
               />
               <div className="grid grid-cols-4 gap-2">
-                <img src={product.image_url || ''} alt="" className="w-full aspect-square object-cover rounded cursor-pointer hover:opacity-80" />
-                <img src={product.image_url || ''} alt="" className="w-full aspect-square object-cover rounded cursor-pointer hover:opacity-80" />
-                <img src={product.image_url || ''} alt="" className="w-full aspect-square object-cover rounded cursor-pointer hover:opacity-80" />
-                <img src={product.image_url || ''} alt="" className="w-full aspect-square object-cover rounded cursor-pointer hover:opacity-80" />
+                <img src={product.image} alt="" className="w-full aspect-square object-cover rounded cursor-pointer hover:opacity-80" />
+                <img src={product.image} alt="" className="w-full aspect-square object-cover rounded cursor-pointer hover:opacity-80" />
+                <img src={product.image} alt="" className="w-full aspect-square object-cover rounded cursor-pointer hover:opacity-80" />
+                <img src={product.image} alt="" className="w-full aspect-square object-cover rounded cursor-pointer hover:opacity-80" />
               </div>
             </div>
 
@@ -185,9 +185,9 @@ const ProductModal: React.FC<ProductModalProps> = ({
                 <div className="text-3xl font-bold text-gray-900 mb-2">
                   {product.price.toLocaleString()} ₽
                 </div>
-                {product.old_price && (
+                {product.oldPrice && (
                   <div className="text-sm text-gray-400 line-through">
-                    {product.old_price.toLocaleString()} ₽
+                    {product.oldPrice.toLocaleString()} ₽
                   </div>
                 )}
               </div>
@@ -242,7 +242,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
                 Купить сейчас
               </button>
 
-              {product.is_new && (
+              {product.isNew && (
                 <div className="mt-3 inline-block bg-green-500 text-white text-xs font-bold px-2 py-1 rounded">
                   Новинка
                 </div>
@@ -278,7 +278,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
                       <div className="mb-6 space-y-4">
                         <div className="bg-white p-4 rounded-lg shadow-sm">
                           <div className="flex items-center mb-2">
-                            <img src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg" alt="Иван" className="w-10 h-10 rounded-full object-cover" />
+                            <img src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg\" alt="Иван\" className="w-10 h-10 rounded-full object-cover" />
                             <div className="ml-3">
                               <div className="font-medium">Иван Петров</div>
                               <div className="text-sm text-gray-500">2 дня назад</div>
