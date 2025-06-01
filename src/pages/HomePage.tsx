@@ -41,6 +41,8 @@ const itemVariants = {
 interface HomePageProps {
   cartItems: CartItem[];
   favorites: Product[];
+  isAuthenticated: boolean;
+  currentUserId?: string;
   isAdmin: boolean;
   userEmail?: string;
   onLogout: () => void;
@@ -51,6 +53,8 @@ interface HomePageProps {
 const HomePage: React.FC<HomePageProps> = ({
   cartItems,
   favorites,
+  isAuthenticated,
+  currentUserId,
   isAdmin,
   userEmail,
   onLogout,
@@ -269,6 +273,8 @@ const HomePage: React.FC<HomePageProps> = ({
             onClose={() => setIsModalOpen(false)}
             onAddToCart={onAddToCart}
             onAddToFavorites={onToggleFavorite}
+            isAuthenticated={isAuthenticated}
+            currentUserId={currentUserId}
           />
         )}
         {isAdmin && selectedProduct && (

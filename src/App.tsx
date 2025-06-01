@@ -13,7 +13,7 @@ import AdminBar from './components/admin/AdminBar';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Product, CartItem } from './types';
-import { checkAdminStatus, supabase } from './lib/supabase';
+import { checkAdminStatus, supabase, isAuthenticated } from './lib/supabase';
 
 const contentVariants: Variants = {
   hidden: { opacity: 0, y: 20 },
@@ -30,6 +30,8 @@ const contentVariants: Variants = {
 function App() {
   const [isLoading, setIsLoading] = React.useState(true);
   const [isAdmin, setIsAdmin] = React.useState(false);
+  const [isUserAuthenticated, setIsUserAuthenticated] = React.useState(false);
+  const [currentUserId, setCurrentUserId] = React.useState<string | undefined>();
   const [userEmail, setUserEmail] = React.useState<string | undefined>();
   const [cartItems, setCartItems] = React.useState<CartItem[]>([]);
   const [favorites, setFavorites] = React.useState<Product[]>([]);
@@ -45,8 +47,12 @@ function App() {
   React.useEffect(() => {
     const checkAdmin = async () => {
       const isAdminUser = await checkAdminStatus();
+      const userIsAuthenticated = await isAuthenticated();
       const { data: { session } } = await supabase.auth.getSession();
+      
       setIsAdmin(isAdminUser);
+      setIsUserAuthenticated(userIsAuthenticated);
+      setCurrentUserId(session?.user?.id);
       setUserEmail(session?.user?.email);
     };
     checkAdmin();
@@ -54,10 +60,16 @@ function App() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN') {
         const isAdminUser = await checkAdminStatus();
+        const userIsAuthenticated = await isAuthenticated();
+        
         setIsAdmin(isAdminUser);
+        setIsUserAuthenticated(userIsAuthenticated);
+        setCurrentUserId(session?.user?.id);
         setUserEmail(session?.user?.email);
       } else if (event === 'SIGNED_OUT') {
         setIsAdmin(false);
+        setIsUserAuthenticated(false);
+        setCurrentUserId(undefined);
         setUserEmail(undefined);
       }
     });
@@ -140,6 +152,8 @@ function App() {
                     favorites={favorites}
                     onAddToCart={handleAddToCart}
                     onToggleFavorite={handleToggleFavorite}
+                    isAuthenticated={isUserAuthenticated}
+                    currentUserId={currentUserId}
                     isAdmin={isAdmin}
                     userEmail={userEmail}
                     onLogout={handleLogout}
