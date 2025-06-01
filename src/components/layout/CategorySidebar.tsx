@@ -1,6 +1,7 @@
 import React from 'react';
 import { ChevronRight, X } from 'lucide-react';
-import { categories } from '../../data/categories';
+import { supabase } from '../../lib/supabase';
+import { Category } from '../../types';
 
 interface CategorySidebarProps {
   isOpen: boolean;
@@ -9,6 +10,32 @@ interface CategorySidebarProps {
 }
 
 const CategorySidebar: React.FC<CategorySidebarProps> = ({ isOpen, onClose, onSelectCategory }) => {
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        setLoading(true);
+        const { data, error } = await supabase
+          .from('categories')
+          .select('*')
+          .order('name');
+
+        if (error) throw error;
+        setCategories(data || []);
+      } catch (err) {
+        console.error('Ошибка при загрузке категорий:', err);
+        setError(err instanceof Error ? err.message : 'Ошибка при загрузке категорий');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
   const scrollToCatalog = () => {
     const catalogElement = document.getElementById('product-catalog');
     if (catalogElement) {

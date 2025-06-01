@@ -12,7 +12,7 @@ import { Product, CartItem } from '../types';
 import { Menu, ShoppingCart, Heart, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { products, getBestSellers } from '../data/products';
+import { supabase } from '../lib/supabase';
 import AdminBar from '../components/admin/AdminBar';
 import { checkAdminStatus } from '../lib/supabase';
 
@@ -59,20 +59,62 @@ const HomePage: React.FC<HomePageProps> = ({
   onAddToCart,
   onToggleFavorite,
 }) => {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [bestSellers, setBestSellers] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [showMobileSidebar, setShowMobileSidebar] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const bestSeller = getBestSellers()[0];
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const filteredProducts = selectedCategory
-    ? products.filter(product => product.category === selectedCategory)
-    : products;
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        
+        // Получаем все товары
+        const { data: productsData, error: productsError } = await supabase
+          .from('products')
+          .select('*, categories(slug)')
+          .order('created_at', { ascending: false });
+
+        if (productsError) throw productsError;
+
+        // Получаем хиты продаж
+        const { data: bestsellersData, error: bestsellersError } = await supabase
+          .from('products')
+          .select('*, categories(slug)')
+          .eq('is_bestseller', true)
+          .limit(4);
+
+        if (bestsellersError) throw bestsellersError;
+
+        setProducts(productsData || []);
+        setBestSellers(bestsellersData || []);
+      } catch (err) {
+        console.error('Ошибка при загрузке товаров:', err);
+        setError(err instanceof Error ? err.message : 'Ошибка при загрузке товаров');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  const filteredProducts = useMemo(() => {
+    if (!selectedCategory) return products;
+    return products.filter(product => 
+      product.categories?.slug === selectedCategory
+    );
+  }, [products, selectedCategory]);
+
+  const bestSeller = bestSellers[0];
 
   const handleCategorySelect = (category: string) => {
     setSelectedCategory(category);
-  };
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">

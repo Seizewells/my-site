@@ -20,18 +20,18 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, onAddTo
       >
         <div className="relative">
           <img 
-            src={product.image} 
+            src={product.image_url || ''} 
             alt={product.name} 
             className="w-full aspect-square object-cover"
             loading="lazy"
             decoding="async"
           />
-          {product.oldPrice && (
+          {product.old_price && (
             <div className="absolute top-1 left-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
-              -{Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)}%
+              -{Math.round(((product.old_price - product.price) / product.old_price) * 100)}%
             </div>
           )}
-          {product.isNew && (
+          {product.is_new && (
             <div className="absolute bottom-1 left-1 bg-green-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
               Новинка
             </div>
@@ -74,7 +74,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, onAddTo
             <div>
               <div className="font-bold text-base sm:text-lg text-gray-900">{product.price.toLocaleString()} ₽</div>
               <div className="text-sm text-gray-500 line-through h-5">
-                {product.oldPrice ? `${product.oldPrice.toLocaleString()} ₽` : ''}
+                {product.old_price ? `${product.old_price.toLocaleString()} ₽` : ''}
               </div>
             </div>
         

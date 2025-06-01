@@ -1,23 +1,28 @@
 export interface Product {
-  id: string;
+  id: number;
   name: string;
+  description: string;
   price: number;
-  oldPrice?: number;
-  image: string;
-  category: string;
-  isNew?: boolean;
-  isBestSeller?: boolean;
-  inStock: boolean;
+  old_price?: number | null;
+  inventory: number;
+  category_id: number;
+  image_url: string | null;
+  featured: boolean;
+  is_new: boolean;
+  is_bestseller: boolean;
   rating: number;
-  description?: string;
-  specifications?: Record<string, string>;
+  specifications: Record<string, any>;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface Category {
-  id: string;
+  id: number;
   name: string;
   slug: string;
-  icon?: string;
+  description: string | null;
+  image_url: string | null;
+  created_at: string | null;
 }
 
 export interface CartItem extends Product {
