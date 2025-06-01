@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Header from '../components/layout/Header';
 import CategorySidebar from '../components/layout/CategorySidebar';
 import HeroSlider from '../components/home/HeroSlider';
@@ -115,6 +115,7 @@ const HomePage: React.FC<HomePageProps> = ({
 
   const handleCategorySelect = (category: string) => {
     setSelectedCategory(category);
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
@@ -176,7 +177,7 @@ const HomePage: React.FC<HomePageProps> = ({
                           setIsModalOpen(true);
                         }}
                       >
-                        <span className="text-xs text-gray-500 block mb-2">Артикул: {getBestSellers()[0].id}</span>
+                        <span className="text-xs text-gray-500 block mb-2">Артикул: {bestSeller.id}</span>
                         <div className="relative h-[250px] mb-4">
                           <img
                             src={bestSeller.image}
