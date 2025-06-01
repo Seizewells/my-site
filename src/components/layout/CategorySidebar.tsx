@@ -10,32 +10,6 @@ interface CategorySidebarProps {
 }
 
 const CategorySidebar: React.FC<CategorySidebarProps> = ({ isOpen, onClose, onSelectCategory }) => {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        setLoading(true);
-        const { data, error } = await supabase
-          .from('categories')
-          .select('*')
-          .order('name');
-
-        if (error) throw error;
-        setCategories(data || []);
-      } catch (err) {
-        console.error('Ошибка при загрузке категорий:', err);
-        setError(err instanceof Error ? err.message : 'Ошибка при загрузке категорий');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCategories();
-  }, []);
-
   const [categories, setCategories] = React.useState<Category[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
@@ -141,7 +115,6 @@ const CategorySidebar: React.FC<CategorySidebarProps> = ({ isOpen, onClose, onSe
                   className="flex items-center justify-between py-2 px-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors text-sm"
                 >
                   <span>{category.name}</span>
-                  <span>{category.name} ({category.id})</span>
                   <ChevronRight size={16} className="text-gray-400" />
                 </button>
               </li>
