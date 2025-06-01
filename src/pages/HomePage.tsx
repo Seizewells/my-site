@@ -180,13 +180,13 @@ const HomePage: React.FC<HomePageProps> = ({
                         <span className="text-xs text-gray-500 block mb-2">Артикул: {bestSeller.id}</span>
                         <div className="relative h-[250px] mb-4">
                           <img
-                            src={bestSeller.image}
+                            src={bestSeller.image_url || ''}
                             alt={bestSeller.name}
                             className="w-full h-full object-cover rounded object-center"
                           />
-                          {bestSeller.oldPrice && (
+                          {bestSeller.old_price && (
                             <div className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
-                              -{Math.round(((bestSeller.oldPrice - bestSeller.price) / bestSeller.oldPrice) * 100)}%
+                              -{Math.round(((bestSeller.old_price - bestSeller.price) / bestSeller.old_price) * 100)}%
                             </div>
                           )}
                           <button 
@@ -220,9 +220,9 @@ const HomePage: React.FC<HomePageProps> = ({
                           <div className="flex justify-between items-end mt-auto">
                             <div>
                               <div className="text-base font-bold text-gray-100">{bestSeller.price.toLocaleString()} ₽</div>
-                              {bestSeller.oldPrice && (
+                              {bestSeller.old_price && (
                                 <div className="text-sm text-white/70 line-through">
-                                  {bestSeller.oldPrice.toLocaleString()} ₽
+                                  {bestSeller.old_price.toLocaleString()} ₽
                                 </div>
                               )}
                             </div>
