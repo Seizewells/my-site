@@ -92,7 +92,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
       const { error } = await supabase
         .from('reviews')
         .update({ rating, comment })
-        .eq('id', reviewId);
+        .eq('id', parseInt(reviewId));
 
       if (error) throw error;
       await fetchReviews();
@@ -107,7 +107,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
       const { error } = await supabase
         .from('reviews')
         .delete()
-        .eq('id', reviewId);
+        .eq('id', parseInt(reviewId));
 
       if (error) throw error;
       await fetchReviews();
