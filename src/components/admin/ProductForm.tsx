@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Product, Category } from '../../types';
 import { supabase } from '../../lib/supabase';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, Star } from 'lucide-react';
+import { useEffect } from 'react';
 
 interface ProductFormProps {
   product?: Product;
@@ -13,9 +14,11 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onSubmit, onCancel }
   const [name, setName] = useState(product?.name || '');
   const [price, setPrice] = useState(product?.price.toString() || '');
   const [oldPrice, setOldPrice] = useState(product?.old_price?.toString() || '');
+  const [isNew, setIsNew] = useState(product?.is_new || false);
+  const [isBestseller, setIsBestseller] = useState(product?.is_bestseller || false);
   const [description, setDescription] = useState(product?.description || '');
   const [categoryId, setCategoryId] = useState(product?.category_id?.toString() || '');
-  const [image, setImage] = useState(product?.image_url || '');
+  const [imageUrl, setImageUrl] = useState(product?.image_url || '');
   const [categoryId, setCategoryId] = useState(product?.category_id?.toString() || '');
   const [image, setImage] = useState(product?.image_url || '');
   const [inventory, setInventory] = useState(product?.inventory?.toString() || '100');
@@ -50,13 +53,12 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onSubmit, onCancel }
       const productData = {
         name,
         price: parseFloat(price),
-        old_price: oldPrice ? parseFloat(oldPrice) : undefined,
+        old_price: oldPrice ? parseFloat(oldPrice) : null,
         description,
         category_id: parseInt(categoryId),
-        image_url: image,
+        image_url: imageUrl,
         is_new: isNew,
-        category_id: parseInt(categoryId),
-        image_url: image,
+        is_bestseller: isBestseller,
         inventory: parseInt(inventory),
         updated_at: new Date()
       };
@@ -179,8 +181,8 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onSubmit, onCancel }
         </label>
         <input
           type="url"
-          value={image}
-          onChange={(e) => setImage(e.target.value)}
+          value={imageUrl}
+          onChange={(e) => setImageUrl(e.target.value)}
           className="w-full px-3 py-2 border border-gray-300 rounded-md"
           required
         />

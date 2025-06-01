@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { X, Star, ShoppingCart, Heart, Share2, ChevronDown, ChevronUp } from 'lucide-react';
 import { Product, Review } from '../../types';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReviewForm from './ReviewForm';
 import ReviewList from './ReviewList';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../../lib/supabase';
+import { AlertCircle } from 'lucide-react';
 
 interface ProductModalProps {
   product: Product;
@@ -38,8 +40,94 @@ const ProductModal: React.FC<ProductModalProps> = ({
   onDeleteReview = () => {}
 }) => {
   const [canShare, setCanShare] = useState(false);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'reviews' | 'questions'>('reviews');
+
+  const fetchReviews = useCallback(async () => {
+    if (!product.id) return;
+    
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('reviews')
+        .select(`
+          *,
+          profiles (
+            username,
+            avatar_url
+          )
+        `)
+        .eq('product_id', product.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setReviews(data || []);
+    } catch (err) {
+      console.error('Ошибка при загрузке отзывов:', err);
+      setError(err instanceof Error ? err.message : 'Ошибка при загрузке отзывов');
+    } finally {
+      setLoading(false);
+    }
+  }, [product.id]);
+
+  useEffect(() => {
+    fetchReviews();
+  }, [fetchReviews]);
+
+  const handleAddReview = async (rating: number, comment: string) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Необходимо авторизоваться');
+
+      const { error } = await supabase
+        .from('reviews')
+        .insert({
+          product_id: product.id,
+          user_id: user.id,
+          rating,
+          comment
+        });
+
+      if (error) throw error;
+      await fetchReviews();
+    } catch (err) {
+      console.error('Ошибка при добавлении отзыва:', err);
+      throw err;
+    }
+  };
+
+  const handleEditReview = async (reviewId: string, rating: number, comment: string) => {
+    try {
+      const { error } = await supabase
+        .from('reviews')
+        .update({ rating, comment })
+        .eq('id', reviewId);
+
+      if (error) throw error;
+      await fetchReviews();
+    } catch (err) {
+      console.error('Ошибка при редактировании отзыва:', err);
+      throw err;
+    }
+  };
+
+  const handleDeleteReview = async (reviewId: string) => {
+    try {
+      const { error } = await supabase
+        .from('reviews')
+        .delete()
+        .eq('id', reviewId);
+
+      if (error) throw error;
+      await fetchReviews();
+    } catch (err) {
+      console.error('Ошибка при удалении отзыва:', err);
+      throw err;
+    }
+  };
 
   useEffect(() => {
     const shareData = {
@@ -275,43 +363,28 @@ const ProductModal: React.FC<ProductModalProps> = ({
                 <div className="mt-4">
                   {activeTab === 'reviews' ? (
                     <>
-                      <div className="mb-6 space-y-4">
-                        <div className="bg-white p-4 rounded-lg shadow-sm">
-                          <div className="flex items-center mb-2">
-                            <img src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg\" alt=\"Иван\" className=\"w-10 h-10 rounded-full object-cover" />
-                            <div className="ml-3">
-                              <div className="font-medium">Иван Петров</div>
-                              <div className="text-sm text-gray-500">2 дня назад</div>
-                            </div>
+                      {loading ? (
+                        <div className="text-center py-4">Загрузка отзывов...</div>
+                      ) : error ? (
+                        <div className="bg-red-50 text-red-500 p-3 rounded-md">
+                          <div className="flex items-center gap-2">
+                            <AlertCircle size={20} />
+                            {error}
                           </div>
-                          <div className="flex mb-2">
-                            {[...Array(5)].map((_, i) => (
-                              <Star key={i} size={16} className={i < 5 ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'} />
-                            ))}
-                          </div>
-                          <p className="text-gray-600">Отличный товар! Качество на высоте, доставка быстрая. Рекомендую всем.</p>
                         </div>
-                        <div className="bg-white p-4 rounded-lg shadow-sm">
-                          <div className="flex items-center mb-2">
-                            <img src="https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg" alt="Анна" className="w-10 h-10 rounded-full object-cover" />
-                            <div className="ml-3">
-                              <div className="font-medium">Анна Иванова</div>
-                              <div className="text-sm text-gray-500">неделю назад</div>
-                            </div>
-                          </div>
-                          <div className="flex mb-2">
-                            {[...Array(5)].map((_, i) => (
-                              <Star key={i} size={16} className={i < 4 ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'} />
-                            ))}
-                          </div>
-                          <p className="text-gray-600">Хороший товар за свои деньги. Есть небольшие недочеты, но в целом я довольна покупкой.</p>
-                        </div>
-                      </div>
+                      ) : (
+                        <ReviewList
+                          reviews={reviews}
+                          currentUserId={currentUserId}
+                          onEdit={handleEditReview}
+                          onDelete={handleDeleteReview}
+                        />
+                      )}
                       {isAuthenticated ? (
                         <div className="mb-6">
                           <ReviewForm
                             productId={product.id}
-                            onSubmit={onAddReview}
+                            onSubmit={handleAddReview}
                           />
                         </div>
                       ) : (
