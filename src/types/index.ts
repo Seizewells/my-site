@@ -52,3 +52,19 @@ export interface User {
   email: string;
   name: string;
 }
+
+export interface Article {
+  id: number;
+  title: string;
+  slug: string;
+  content: string;
+  image_url?: string;
+  published: boolean;
+  created_at: string;
+  updated_at: string;
+  author_id: string;
+  author?: {
+    username: string | null;
+    avatar_url: string | null;
+  };
+}
