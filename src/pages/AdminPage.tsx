@@ -119,6 +119,9 @@ const AdminPage: React.FC = () => {
               {activeTab === 'products' && (
                 <ProductList />
               )}
+              {activeTab === 'orders' && (
+                <OrderList />
+              )}
               {activeTab === 'articles' && (
                 <div>
                   <h2 className="text-xl font-semibold mb-4">Управление статьями</h2>
