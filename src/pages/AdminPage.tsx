@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Package, Users, ShoppingBag, Settings, LogOut, FileText } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import ProductList from '../components/admin/ProductList';
+import UserList from '../components/admin/UserList';
 import OrderList from '../components/admin/OrderList';
 
 const AdminPage: React.FC = () => {
@@ -129,7 +130,7 @@ const AdminPage: React.FC = () => {
               {activeTab === 'users' && (
                 <div>
                   <h2 className="text-xl font-semibold mb-4">Управление пользователями</h2>
-                  {/* Здесь будет компонент управления пользователями */}
+                  <UserList />
                 </div>
               )}
               {activeTab === 'settings' && (

@@ -28,10 +28,10 @@ export const checkAdminStatus = async () => {
       return false;
     }
     
-    const { data: roleData, error } = await supabase
-      .from('user_roles')
-      .select('role')
-      .eq('user_id', session.user.id)
+    const { data: profile, error } = await supabase
+      .from('profiles')
+      .select('is_admin')
+      .eq('id', session.user.id)
       .single();
 
     if (error) {
@@ -39,7 +39,7 @@ export const checkAdminStatus = async () => {
       return false;
     }
 
-    return roleData?.role === 'admin' || roleData?.role === 'super_admin';
+    return profile?.is_admin === true;
   } catch (error) {
     console.error('Ошибка в checkAdminStatus:', error);
     return false;
