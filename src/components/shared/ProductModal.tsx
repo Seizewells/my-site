@@ -87,7 +87,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
     }
   };
 
-  const handleEditReview = async (reviewId: string, rating: number, comment: string) => {
+  const handleEditReview = async (reviewId: number, rating: number, comment: string) => {
     try {
       const { error } = await supabase
         .from('reviews')
@@ -102,7 +102,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
     }
   };
 
-  const handleDeleteReview = async (reviewId: string) => {
+  const handleDeleteReview = async (reviewId: number) => {
     try {
       const { error } = await supabase
         .from('reviews')

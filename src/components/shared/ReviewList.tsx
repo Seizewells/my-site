@@ -7,7 +7,7 @@ import { ru } from 'date-fns/locale';
 interface ReviewListProps {
   reviews: Review[];
   currentUserId?: string;
-  onEdit: (review: Review) => Promise<void>;
+  onEdit: (reviewId: number, rating: number, comment: string) => Promise<void>;
   onDelete: (reviewId: number) => Promise<void>;
 }
 
@@ -53,7 +53,7 @@ const ReviewList: React.FC<ReviewListProps> = ({
             {currentUserId === review.user_id && (
               <div className="flex space-x-2">
                 <button
-                  onClick={() => onEdit(review)}
+                  onClick={() => onEdit(review.id, review.rating, review.comment)}
                   className="p-1 hover:bg-gray-100 rounded-full transition-colors"
                 >
                   <Edit2 size={16} className="text-gray-500" />
