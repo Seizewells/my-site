@@ -382,12 +382,6 @@ const ProductModal: React.FC<ProductModalProps> = ({
                           </p>
                         </div>
                       )}
-                      <ReviewList
-                        reviews={reviews}
-                        currentUserId={currentUserId}
-                        onEdit={handleEditReview}
-                        onDelete={handleDeleteReview}
-                      />
                     </>
                   ) : (
                     <div className="space-y-4">
