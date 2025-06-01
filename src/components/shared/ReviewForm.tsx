@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Star } from 'lucide-react';
 
+interface ReviewFormProps {
   onSubmit: (rating: number, comment: string) => Promise<void>;
 }
 
@@ -79,4 +80,4 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ onSubmit }) => {
   );
 };
 
-export default ReviewForm
+export default ReviewForm;
