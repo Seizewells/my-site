@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import HomePage from './pages/HomePage';
 import AboutPage from './pages/AboutPage';
 import BlogPage from './pages/BlogPage';
+import ArticlePage from './pages/ArticlePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import CartPage from './pages/CartPage';
@@ -349,6 +350,7 @@ function App() {
                   />
                 } />
                 <Route path="/blog" element={<BlogPage />} />
+                <Route path="/blog/:slug" element={<ArticlePage />} />
                 <Route path="/cart" element={
                   <CartPage 
                     cartItems={cartItems}
