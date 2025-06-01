@@ -120,7 +120,10 @@ const AdminPage: React.FC = () => {
                 <ProductList />
               )}
               {activeTab === 'articles' && (
-                <ArticleList />
+                <div>
+                  <h2 className="text-xl font-semibold mb-4">Управление статьями</h2>
+                  <ArticleList />
+                </div>
               )}
               {activeTab === 'orders' && (
                 <OrderList />
