@@ -11,6 +11,8 @@ import { AlertCircle } from 'lucide-react';
 interface ProductModalProps {
   product: Product;
   isOpen: boolean;
+  isAuthenticated?: boolean;
+  currentUserId?: string;
   onClose: () => void;
   onAddToCart: (product: Product) => void;
   onAddToFavorites: (product: Product) => void;
@@ -19,15 +21,11 @@ interface ProductModalProps {
 const ProductModal: React.FC<ProductModalProps> = ({
   product,
   isOpen,
+  isAuthenticated,
+  currentUserId,
   onClose,
   onAddToCart,
-  onAddToFavorites,
-  reviews = [],
-  isAuthenticated = false,
-  currentUserId,
-  onAddReview = async () => {},
-  onEditReview = () => {},
-  onDeleteReview = () => {}
+  onAddToFavorites
 }) => {
   const [canShare, setCanShare] = useState(false);
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -373,7 +371,6 @@ const ProductModal: React.FC<ProductModalProps> = ({
                       {isAuthenticated ? (
                         <div className="mb-6">
                           <ReviewForm
-                            productId={product.id}
                             onSubmit={handleAddReview}
                           />
                         </div>
@@ -394,8 +391,8 @@ const ProductModal: React.FC<ProductModalProps> = ({
                       <ReviewList
                         reviews={reviews}
                         currentUserId={currentUserId}
-                        onEdit={onEditReview}
-                        onDelete={onDeleteReview}
+                        onEdit={handleEditReview}
+                        onDelete={handleDeleteReview}
                       />
                     </>
                   ) : (

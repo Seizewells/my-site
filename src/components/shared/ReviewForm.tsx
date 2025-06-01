@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Star } from 'lucide-react';
 
-interface ReviewFormProps {
   onSubmit: (rating: number, comment: string) => Promise<void>;
 }
 
@@ -14,14 +13,14 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ onSubmit }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (rating === 0) return;
-    
+
     setIsSubmitting(true);
     try {
       await onSubmit(rating, comment);
       setRating(0);
       setComment('');
     } catch (error) {
-      console.error('Error submitting review:', error);
+      console.error('Ошибка при отправке отзыва:', error);
     } finally {
       setIsSubmitting(false);
     }
