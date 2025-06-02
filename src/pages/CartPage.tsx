@@ -7,8 +7,8 @@ import { Minus, Plus, Trash2 } from 'lucide-react';
 
 interface CartPageProps {
   cartItems: CartItem[];
-  onUpdateQuantity: (productId: string, quantity: number) => void;
-  onRemoveFromCart: (productId: string) => void;
+  onUpdateQuantity: (productId: number, quantity: number) => void;
+  onRemoveFromCart: (productId: number) => void;
 }
 
 const CartPage: React.FC<CartPageProps> = ({ cartItems, onUpdateQuantity, onRemoveFromCart }) => {
@@ -50,7 +50,7 @@ const CartPage: React.FC<CartPageProps> = ({ cartItems, onUpdateQuantity, onRemo
                 <div key={item.id} className="bg-white rounded-lg p-4 mb-4 shadow-sm">
                   <div className="flex items-center">
                     <img 
-                      src={item.image} 
+                      src={item.image_url} 
                       alt={item.name} 
                       className="w-24 h-24 object-cover rounded-md"
                     />
@@ -62,20 +62,20 @@ const CartPage: React.FC<CartPageProps> = ({ cartItems, onUpdateQuantity, onRemo
                     </div>
                     <div className="flex items-center space-x-2">
                       <button
-                        onClick={() => onUpdateQuantity(item.id, Math.max(0, item.quantity - 1))}
+                        onClick={() => onUpdateQuantity(Number(item.id), Math.max(0, item.quantity - 1))}
                         className="p-1 rounded-md hover:bg-gray-100"
                       >
                         <Minus size={20} />
                       </button>
                       <span className="w-8 text-center">{item.quantity}</span>
                       <button
-                        onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
+                        onClick={() => onUpdateQuantity(Number(item.id), item.quantity + 1)}
                         className="p-1 rounded-md hover:bg-gray-100"
                       >
                         <Plus size={20} />
                       </button>
                       <button
-                        onClick={() => onRemoveFromCart(item.id)}
+                        onClick={() => onRemoveFromCart(Number(item.id))}
                         className="p-1 rounded-md hover:bg-gray-100 ml-4"
                       >
                         <Trash2 size={20} className="text-red-500" />
