@@ -34,6 +34,10 @@ const RegisterPage: React.FC = () => {
             first_name: firstName,
             last_name: lastName
           },
+          data: {
+            first_name: firstName,
+            last_name: lastName
+          },
           emailRedirectTo: `${window.location.origin}/auth/callback`
         }
       });
@@ -41,7 +45,8 @@ const RegisterPage: React.FC = () => {
       if (error) throw error;
 
       // Create profile
-      const { error: profileError } = await supabase
+      if (data.user) {
+        const { error: profileError } = await supabase
         .from('profiles')
         .insert([
           {
@@ -53,16 +58,7 @@ const RegisterPage: React.FC = () => {
         ]);
 
       if (profileError) throw profileError;
-
-      const { error: signUpError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/login`
-        }
-      });
-
-      if (error) throw error;
+      }
       
       // После успешной регистрации показываем сообщение о необходимости подтверждения email
       navigate('/login', { 

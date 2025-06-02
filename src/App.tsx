@@ -8,6 +8,7 @@ import RegisterPage from './pages/RegisterPage';
 import CartPage from './pages/CartPage';
 import FavoritesPage from './pages/FavoritesPage';
 import AdminLoginPage from './pages/AdminLoginPage';
+import AuthCallbackPage from './pages/AuthCallbackPage';
 import ProfilePage from './pages/ProfilePage';
 import LoadingSpinner from './components/shared/LoadingSpinner';
 import AdminBar from './components/admin/AdminBar';
@@ -369,6 +370,7 @@ function App() {
                 <Route path="/register" element={<RegisterPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/admin/login" element={<AdminLoginPage />} />
+                <Route path="/auth/callback" element={<AuthCallbackPage />} />
               </Routes>
               {isAdmin && <AdminBar />}
             </motion.div>
