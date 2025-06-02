@@ -346,16 +346,41 @@ function App() {
                 } />
                 <Route path="/about" element={
                   <AboutPage 
+                    cartItems={cartItems}
+                    favoritesCount={favorites.length}
                     isAdmin={isAdmin} 
                     userEmail={userEmail} 
                     onLogout={handleLogout}
                   />
                 } />
-                <Route path="/blog" element={<BlogPage />} />
-                <Route path="/blog/:slug" element={<ArticlePage />} />
+                <Route path="/blog" element={
+                  <BlogPage
+                    cartItems={cartItems}
+                    favoritesCount={favorites.length}
+                    isAuthenticated={isUserAuthenticated}
+                    isAdmin={isAdmin}
+                    userEmail={userEmail}
+                    onLogout={handleLogout}
+                  />
+                } />
+                <Route path="/blog/:slug" element={
+                  <ArticlePage
+                    cartItems={cartItems}
+                    favoritesCount={favorites.length}
+                    isAuthenticated={isUserAuthenticated}
+                    isAdmin={isAdmin}
+                    userEmail={userEmail}
+                    onLogout={handleLogout}
+                  />
+                } />
                 <Route path="/cart" element={
                   <CartPage 
                     cartItems={cartItems}
+                    favoritesCount={favorites.length}
+                    isAuthenticated={isUserAuthenticated}
+                    isAdmin={isAdmin}
+                    userEmail={userEmail}
+                    onLogout={handleLogout}
                     onUpdateQuantity={handleUpdateCartQuantity}
                     onRemoveFromCart={handleRemoveFromCart}
                   />
@@ -363,15 +388,34 @@ function App() {
                 <Route path="/favorites" element={
                   <FavoritesPage 
                     favorites={favorites}
+                    cartItems={cartItems}
+                    isAuthenticated={isUserAuthenticated}
+                    isAdmin={isAdmin}
+                    userEmail={userEmail}
+                    onLogout={handleLogout}
                     onAddToCart={handleAddToCart}
                     onRemoveFromFavorites={handleToggleFavorite}
                   />
                 } />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
-                <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/profile" element={
+                  <ProfilePage
+                    cartItems={cartItems}
+                    favoritesCount={favorites.length}
+                    isAuthenticated={isUserAuthenticated}
+                    isAdmin={isAdmin}
+                    userEmail={userEmail}
+                    onLogout={handleLogout}
+                  />
+                } />
                 <Route path="/confirm-email" element={<ConfirmEmailPage />} />
                 <Route path="/admin/login" element={<AdminLoginPage />} />
+                <Route path="/admin" element={
+                  <AdminRoute>
+                    <AdminPage />
+                  </AdminRoute>
+                } />
                 <Route path="/auth/callback" element={<AuthCallbackPage />} />
               </Routes>
               {isAdmin && <AdminBar />}
