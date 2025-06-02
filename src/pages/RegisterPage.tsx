@@ -16,16 +16,19 @@ const RegisterPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Starting registration process...');
     setLoading(true);
     setError('');
 
     if (password !== confirmPassword) {
+      console.log('Password validation failed: passwords do not match');
       setError('Пароли не совпадают');
       setLoading(false);
       return;
     }
 
     try {
+      console.log('Attempting to sign up with Supabase...');
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -34,18 +37,26 @@ const RegisterPage: React.FC = () => {
             first_name: firstName,
             last_name: lastName
           },
-          data: {
-            first_name: firstName,
-            last_name: lastName
-          },
           emailRedirectTo: `${window.location.origin}/auth/callback`
         }
+      });
+
+      console.log('Supabase signUp response:', {
+        user: data.user ? {
+          id: data.user.id,
+          email: data.user.email,
+          emailConfirmedAt: data.user.email_confirmed_at,
+          userMetadata: data.user.user_metadata
+        } : null,
+        session: data.session ? 'Session exists' : 'No session',
+        error
       });
 
       if (error) throw error;
 
       // Create profile
       if (data.user) {
+        console.log('Creating user profile...');
         const { error: profileError } = await supabase
         .from('profiles')
         .insert([
@@ -57,16 +68,27 @@ const RegisterPage: React.FC = () => {
           }
         ]);
 
+        console.log('Profile creation result:', profileError ? 
+          { error: profileError.message } : 
+          'Profile created successfully'
+        );
+
       if (profileError) throw profileError;
       }
       
+      console.log('Registration successful, redirecting to login...');
       // После успешной регистрации показываем сообщение о необходимости подтверждения email
       navigate('/login', { 
         state: { message: 'Регистрация успешна! Пожалуйста, проверьте вашу почту и подтвердите email перед входом в систему.' } 
       });
 
     } catch (err) {
-      console.error('Ошибка регистрации:', err);
+      console.error('Detailed registration error:', {
+        error: err,
+        message: err instanceof Error ? err.message : 'Unknown error',
+        stack: err instanceof Error ? err.stack : undefined
+      });
+
       if (err instanceof Error) {
         if (err.message.includes('User already registered')) {
           setError('Пользователь с таким email уже существует');
