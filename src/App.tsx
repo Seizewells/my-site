@@ -13,6 +13,7 @@ import AuthCallbackPage from './pages/AuthCallbackPage';
 import ProfilePage from './pages/ProfilePage';
 import LoadingSpinner from './components/shared/LoadingSpinner';
 import AdminBar from './components/admin/AdminBar';
+import AdminRoute from './components/admin/AdminRoute';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Product, CartItem } from './types';
@@ -337,8 +338,6 @@ function App() {
                     currentUserId={currentUserId}
                     onAddToCart={handleAddToCart}
                     onToggleFavorite={handleToggleFavorite}
-                    isAuthenticated={isUserAuthenticated}
-                    currentUserId={currentUserId}
                     isAdmin={isAdmin}
                     userEmail={userEmail}
                     onLogout={handleLogout}
