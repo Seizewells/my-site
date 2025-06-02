@@ -11,6 +11,7 @@ import FavoritesPage from './pages/FavoritesPage';
 import AdminLoginPage from './pages/AdminLoginPage';
 import AuthCallbackPage from './pages/AuthCallbackPage';
 import ProfilePage from './pages/ProfilePage';
+import AdminPage from './pages/AdminPage';
 import LoadingSpinner from './components/shared/LoadingSpinner';
 import AdminBar from './components/admin/AdminBar';
 import AdminRoute from './components/admin/AdminRoute';
