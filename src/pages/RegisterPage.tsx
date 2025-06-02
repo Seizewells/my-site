@@ -200,5 +200,3 @@ const RegisterPage: React.FC = () => {
 };
 
 export default RegisterPage
-
-export default RegisterPage
