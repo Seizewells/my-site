@@ -1,13 +1,20 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Settings, X, Plus, Edit2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ProductForm from './ProductForm';
 import { Product } from '../../types';
 
-const AdminBar: React.FC = () => {
+interface AdminBarProps {
+  onProductUpdate?: () => void;
+  currentProduct?: Product;
+}
+
+const AdminBar: React.FC<AdminBarProps> = ({ onProductUpdate, currentProduct }) => {
   const navigate = useNavigate();
 
   const [isOpen, setIsOpen] = useState(false);
+  const [showProductForm, setShowProductForm] = useState(false);
 
   return (
     <>
@@ -38,6 +45,23 @@ const AdminBar: React.FC = () => {
               </div>
 
               <div className="space-y-4">
+                {currentProduct ? (
+                  <button
+                    onClick={() => setShowProductForm(true)}
+                    className="flex items-center gap-2 w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                  >
+                    <Edit2 size={18} />
+                    Редактировать товар
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => setShowProductForm(true)}
+                    className="flex items-center gap-2 w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                  >
+                    <Plus size={18} />
+                    Добавить товар
+                  </button>
+                )}
                 <button
                   onClick={() => {
                     navigate('/admin');
@@ -53,6 +77,24 @@ const AdminBar: React.FC = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {showProductForm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6">
+            <h2 className="text-xl font-semibold mb-4">
+              {currentProduct ? 'Редактировать товар' : 'Добавить товар'}
+            </h2>
+            <ProductForm
+              product={currentProduct}
+              onSubmit={() => {
+                setShowProductForm(false);
+                if (onProductUpdate) onProductUpdate();
+              }}
+              onCancel={() => setShowProductForm(false)}
+            />
+          </div>
+        </div>
+      )}
     </>
   );
 };
