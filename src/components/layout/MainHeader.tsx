@@ -1,18 +1,26 @@
 import React, { useState } from 'react';
-import { Search, Heart, ShoppingCart, User, Menu, X, Settings } from 'lucide-react';
+import { Search, Heart, ShoppingCart, Menu, X, Settings } from 'lucide-react';
 import { CartItem } from '../../types';
 import { Link, useNavigate } from 'react-router-dom';
-import UserMenu from './UserMenu';
+import AuthButton from '../auth/AuthButton';
 
 interface MainHeaderProps {
   cartItems: CartItem[];
   favoritesCount: number;
+  isAuthenticated: boolean;
   isAdmin: boolean;
   userEmail?: string;
   onLogout: () => void;
 }
 
-const MainHeader: React.FC<MainHeaderProps> = ({ cartItems, favoritesCount, isAdmin, userEmail, onLogout }) => {
+const MainHeader: React.FC<MainHeaderProps> = ({ 
+  cartItems, 
+  favoritesCount, 
+  isAuthenticated,
+  isAdmin, 
+  userEmail, 
+  onLogout 
+}) => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
@@ -81,13 +89,11 @@ const MainHeader: React.FC<MainHeaderProps> = ({ cartItems, favoritesCount, isAd
                 </span>
               )}
             </Link>
-            {userEmail ? (
-              <UserMenu isAdmin={isAdmin} userEmail={userEmail} onLogout={onLogout} />
-            ) : (
-              <Link to="/login" className="text-blue-800 hover:text-blue-900 transition-all hover:glow-blue">
-                <User size={22} className="text-gray-900" />
-              </Link>
-            )}
+            <AuthButton 
+              isAuthenticated={isAuthenticated}
+              userEmail={userEmail}
+              onLogout={onLogout}
+            />
           </div>
 
           {/* Mobile Menu Button */}
@@ -142,7 +148,11 @@ const MainHeader: React.FC<MainHeaderProps> = ({ cartItems, favoritesCount, isAd
                   </span>
                 )}
               </Link>
-              <Link to="/login" className="text-blue-800 hover:text-blue-900 transition-colors py-2">Войти</Link>
+              <AuthButton 
+                isAuthenticated={isAuthenticated}
+                userEmail={userEmail}
+                onLogout={onLogout}
+              />
               <Link to="/admin/login" className="flex items-center gap-2 bg-gray-900 text-white px-3 py-2 rounded-md">
                 <Settings size={18} />
                 <span>Админ панель</span>
