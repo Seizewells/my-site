@@ -53,6 +53,10 @@ const RegisterPage: React.FC = () => {
         ]);
 
       if (profileError) throw profileError;
+
+      const { error: signUpError } = await supabase.auth.signUp({
+        email,
+        password,
         options: {
           emailRedirectTo: `${window.location.origin}/login`
         }
