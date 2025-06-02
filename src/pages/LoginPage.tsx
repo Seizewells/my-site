@@ -45,13 +45,18 @@ const LoginPage: React.FC = () => {
         throw new Error('Ошибка входа: сессия не создана');
       }
 
-      // После успешного входа перенаправляем на главную
-      navigate('/profile');
+      // После успешного входа перенаправляем на главную страницу
+      navigate('/', { replace: true });
     } catch (err) {
       console.error('Ошибка входа:', err);
       setError(err instanceof Error ? err.message : 'Произошла ошибка при входе');
-    } finally {
       setLoading(false);
+    } finally {
+      // Убираем установку loading в finally, так как при успешном входе
+      // компонент будет размонтирован из-за навигации
+      if (error) {
+        setLoading(false);
+      }
     }
   };
 
