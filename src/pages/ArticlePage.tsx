@@ -8,7 +8,19 @@ import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import ReactMarkdown from 'react-markdown';
 
-const ArticlePage: React.FC = () => {
+interface ArticlePageProps {
+  isAuthenticated: boolean;
+  isAdmin: boolean;
+  userEmail?: string;
+  onLogout: () => void;
+}
+
+const ArticlePage: React.FC<ArticlePageProps> = ({
+  isAuthenticated,
+  isAdmin,
+  userEmail,
+  onLogout
+}) => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const [article, setArticle] = useState<Article | null>(null);
@@ -86,7 +98,14 @@ const ArticlePage: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
-      <Header cartItems={[]} favoritesCount={0} />
+      <Header 
+        cartItems={[]} 
+        favoritesCount={0}
+        isAuthenticated={isAuthenticated}
+        isAdmin={isAdmin}
+        userEmail={userEmail}
+        onLogout={onLogout}
+      />
       
       <main className="flex-grow">
         {article.image_url && (

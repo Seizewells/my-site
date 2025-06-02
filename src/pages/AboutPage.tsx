@@ -3,10 +3,29 @@ import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import { motion } from 'framer-motion';
 
-const AboutPage: React.FC = () => {
+interface AboutPageProps {
+  isAuthenticated: boolean;
+  isAdmin: boolean;
+  userEmail?: string;
+  onLogout: () => void;
+}
+
+const AboutPage: React.FC<AboutPageProps> = ({ 
+  isAuthenticated,
+  isAdmin, 
+  userEmail, 
+  onLogout 
+}) => {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
-      <Header cartItems={[]} favoritesCount={0} />
+      <Header 
+        cartItems={[]} 
+        favoritesCount={0}
+        isAuthenticated={isAuthenticated}
+        isAdmin={isAdmin}
+        userEmail={userEmail}
+        onLogout={onLogout}
+      />
       
       <main className="flex-grow container mx-auto px-4 py-8">
         <motion.div

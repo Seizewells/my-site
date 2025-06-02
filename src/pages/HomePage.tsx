@@ -124,6 +124,7 @@ const HomePage: React.FC<HomePageProps> = ({
       <Header 
         cartItems={cartItems} 
         favoritesCount={favorites.length}
+        isAuthenticated={isAuthenticated}
         isAdmin={isAdmin}
         userEmail={userEmail}
         onLogout={onLogout}

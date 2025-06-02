@@ -7,7 +7,19 @@ import { Article } from '../types';
 import { AlertCircle } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 
-const BlogPage: React.FC = () => {
+interface BlogPageProps {
+  isAuthenticated: boolean;
+  isAdmin: boolean;
+  userEmail?: string;
+  onLogout: () => void;
+}
+
+const BlogPage: React.FC<BlogPageProps> = ({
+  isAuthenticated,
+  isAdmin,
+  userEmail,
+  onLogout
+}) => {
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -43,7 +55,14 @@ const BlogPage: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
-      <Header cartItems={[]} favoritesCount={0} />
+      <Header 
+        cartItems={[]} 
+        favoritesCount={0}
+        isAuthenticated={isAuthenticated}
+        isAdmin={isAdmin}
+        userEmail={userEmail}
+        onLogout={onLogout}
+      />
       
       <main className="flex-grow container mx-auto px-4 py-8">
         <motion.div
