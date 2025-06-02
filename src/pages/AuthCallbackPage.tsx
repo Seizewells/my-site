@@ -23,7 +23,7 @@ const AuthCallbackPage: React.FC = () => {
 
           if (updateError) throw updateError;
 
-          navigate('/', { replace: true });
+          navigate('/profile', { replace: true });
         } else {
           throw new Error('No session found');
         }

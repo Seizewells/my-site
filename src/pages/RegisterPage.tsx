@@ -54,10 +54,9 @@ const RegisterPage: React.FC = () => {
 
       if (error) throw error;
       
-      console.log('Registration successful, redirecting to login...');
-      // После успешной регистрации показываем сообщение о необходимости подтверждения email
-      navigate('/login', { 
-        state: { message: 'Регистрация успешна! Пожалуйста, проверьте вашу почту и подтвердите email перед входом в систему.' } 
+      console.log('Registration successful, redirecting to confirm email page...');
+      navigate('/confirm-email', { 
+        state: { email } 
       });
 
     } catch (err) {

@@ -46,7 +46,7 @@ const LoginPage: React.FC = () => {
       }
 
       // После успешного входа перенаправляем на главную
-      navigate('/');
+      navigate('/profile');
     } catch (err) {
       console.error('Ошибка входа:', err);
       setError(err instanceof Error ? err.message : 'Произошла ошибка при входе');

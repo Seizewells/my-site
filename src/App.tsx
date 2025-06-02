@@ -6,6 +6,7 @@ import ArticlePage from './pages/ArticlePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import CartPage from './pages/CartPage';
+import ConfirmEmailPage from './pages/ConfirmEmailPage';
 import FavoritesPage from './pages/FavoritesPage';
 import AdminLoginPage from './pages/AdminLoginPage';
 import AuthCallbackPage from './pages/AuthCallbackPage';
@@ -369,6 +370,7 @@ function App() {
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/confirm-email" element={<ConfirmEmailPage />} />
                 <Route path="/admin/login" element={<AdminLoginPage />} />
                 <Route path="/auth/callback" element={<AuthCallbackPage />} />
               </Routes>
