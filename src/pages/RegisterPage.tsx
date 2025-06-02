@@ -53,28 +53,6 @@ const RegisterPage: React.FC = () => {
       });
 
       if (error) throw error;
-
-      // Create profile
-      if (data.user) {
-        console.log('Creating user profile...');
-        const { error: profileError } = await supabase
-        .from('profiles')
-        .insert([
-          {
-            id: data.user?.id,
-            first_name: firstName,
-            last_name: lastName,
-            email: email
-          }
-        ]);
-
-        console.log('Profile creation result:', profileError ? 
-          { error: profileError.message } : 
-          'Profile created successfully'
-        );
-
-      if (profileError) throw profileError;
-      }
       
       console.log('Registration successful, redirecting to login...');
       // После успешной регистрации показываем сообщение о необходимости подтверждения email
